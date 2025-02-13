@@ -1,0 +1,36 @@
+{
+  "name": "japanese-vkeyboard",
+  "version": "0.2.3",
+  "description": "A Japanese virtual keyboard component for React applications",
+  "main": "dist/virtual-keyboard.js",
+  "module": "dist/virtual-keyboard.esm.js",
+  "types": "dist/virtual-keyboard.d.ts",
+  "files": ["dist"],
+  "scripts": {
+    "build": "rollup -c && npm run copy-css",
+    "copy-css": "copy src\\*.css dist\\",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": ["react", "japanese", "virtual keyboard", "input"],
+  "author": "k-noguchi",
+  "license": "MIT",
+  "peerDependencies": {
+    "react": "^17.0.0 || ^18.0.0",
+    "react-dom": "^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^22.0.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@rollup/plugin-typescript": "^8.3.3",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "rollup": "^2.79.1",
+    "rollup-plugin-dts": "^4.2.2",
+    "rollup-plugin-postcss": "^4.0.2",
+    "tslib": "^2.4.0",
+    "typescript": "^4.5.0"
+  },
+  "homepage": "https://vkdemo.vercel.app/"
+}
