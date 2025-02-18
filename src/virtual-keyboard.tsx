@@ -1,9 +1,9 @@
+import type React from "react"
 // "use client" directive removed. This component only works on the client-side.
 
 import { useState, useCallback, useEffect, useRef } from "react"
 import type { FC, ReactElement } from "react"
 import styles from "./virtual-keyboard.module.css"
-import React from "react"
 
 interface VKeyboardProps {
   value: string
@@ -22,9 +22,9 @@ const hiraganaLayout = [
   ["あ", "か", "さ", "た", "な", "は", "ま", "や", "ら", "わ"],
   ["い", "き", "し", "ち", "に", "ひ", "み", "ゆ", "り", "を"],
   ["う", "く", "す", "つ", "ぬ", "ふ", "む", "よ", "る", "ん"],
-  ["え", "け", "せ", "て", "ね", "へ", "め", "　", "れ", "削除"],
-  ["お", "こ", "そ", "と", "の", "ほ", "も", "゛", "ろ", "変換"],
-  ["ー", "、", "。", "？", "！", "（", "）", "゜", "・", "確定"],
+  ["え", "け", "せ", "て", "ね", "へ", "め", "゛", "れ", "削除"],
+  ["お", "こ", "そ", "と", "の", "ほ", "も", "゜", "ろ", "変換"],
+  ["ー", "、", "。", "？", "！", "（", "）", "/", "・", "確定"],
 ]
 
 const tenkeyLayout = [
@@ -77,7 +77,7 @@ const VKeyboard: FC<VKeyboardProps> = ({
   const [activeKey, setActiveKey] = useState<string | null>(null)
   const [candidates, setCandidates] = useState<Candidate[]>([])
   const [showCandidates, setShowCandidates] = useState(false)
-  const [conversionEnabled, setConversionEnabled] = useState(eCon)
+  const [conversionEnabled, setConversionEnabled] = useState(vType === "hirakey" && eCon)
   const [confirmedText, setConfirmedText] = useState("")
   const [inputText, setInputText] = useState("")
   const containerRef = useRef<HTMLDivElement>(null)
@@ -87,6 +87,8 @@ const VKeyboard: FC<VKeyboardProps> = ({
   const [size, setSize] = useState({ width: 400, height: 300 })
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 })
   const [resizeStart, setResizeStart] = useState({ x: 0, y: 0 })
+  const [isDeleting, setIsDeleting] = useState(false)
+  const deleteIntervalRef = useRef<NodeJS.Timeout | null>(null)
 
   const layout = keyboardType === "hirakey" ? hiraganaLayout : tenkeyLayout
 
@@ -207,12 +209,41 @@ const VKeyboard: FC<VKeyboardProps> = ({
     }
   }
 
+  const startDeleting = useCallback(() => {
+    setIsDeleting(true)
+    deleteIntervalRef.current = setInterval(() => {
+      setInputText((prev) => prev.slice(0, -1))
+    }, 100)
+  }, [])
+
+  const stopDeleting = useCallback(() => {
+    setIsDeleting(false)
+    if (deleteIntervalRef.current) {
+      clearInterval(deleteIntervalRef.current)
+    }
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (deleteIntervalRef.current) {
+        clearInterval(deleteIntervalRef.current)
+      }
+    }
+  }, [])
+
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (containerRef.current) {
         const { width, height } = containerRef.current.getBoundingClientRect()
         containerRef.current.style.setProperty("--container-width", `${width}px`)
         containerRef.current.style.setProperty("--container-height", `${height}px`)
+
+        const keys = containerRef.current.querySelectorAll(`.${styles.key}`)
+        keys.forEach((key) => {
+          const { width: keyWidth, height: keyHeight } = (key as HTMLElement).getBoundingClientRect()
+          ;(key as HTMLElement).style.setProperty("--key-width", `${keyWidth}px`)
+          ;(key as HTMLElement).style.setProperty("--key-height", `${keyHeight}px`)
+        })
       }
     })
 
@@ -228,6 +259,11 @@ const VKeyboard: FC<VKeyboardProps> = ({
   }, [])
 
   useEffect(() => {
+    setKeyboardType(vType)
+    setConversionEnabled(vType === "hirakey" && eCon)
+  }, [vType, eCon])
+
+  useEffect(() => {
     setShowCandidates(false)
   }, [])
 
@@ -241,6 +277,10 @@ const VKeyboard: FC<VKeyboardProps> = ({
       }
     }
   }, [isFloating, handleMouseMove, handleMouseUp])
+
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault()
+  }
 
   return (
     <div
@@ -258,6 +298,7 @@ const VKeyboard: FC<VKeyboardProps> = ({
           : undefined
       }
       onMouseDown={handleMouseDown}
+      onContextMenu={handleContextMenu}
     >
       <div className={styles.keyboardWrapper}>
         {keyboardType === "hirakey" && conversionEnabled && (
@@ -292,8 +333,21 @@ const VKeyboard: FC<VKeyboardProps> = ({
                   key={key}
                   className={`${styles.key} ${activeKey === key ? styles.active : ""} ${
                     ["削除", "変換", "確定"].includes(key) ? styles.functionKey : ""
-                  } ${key === "変換" && (!conversionEnabled || keyboardType === "tenkey") ? styles.disabled : ""}`}
+                  } ${key === "変換" && (!conversionEnabled || keyboardType === "tenkey") ? styles.disabled : ""} ${
+                    key === "削除"
+                      ? styles.deleteKey
+                      : key === "変換"
+                        ? styles.convertKey
+                        : key === "確定"
+                          ? styles.confirmKey
+                          : ""
+                  }`}
                   onClick={() => handleKeyPress(key)}
+                  onMouseDown={() => key === "削除" && startDeleting()}
+                  onMouseUp={() => key === "削除" && stopDeleting()}
+                  onMouseLeave={() => key === "削除" && stopDeleting()}
+                  onTouchStart={() => key === "削除" && startDeleting()}
+                  onTouchEnd={() => key === "削除" && stopDeleting()}
                   disabled={key === "変換" && (!conversionEnabled || keyboardType === "tenkey")}
                 >
                   {key}
@@ -309,3 +363,4 @@ const VKeyboard: FC<VKeyboardProps> = ({
 }
 
 export default VKeyboard
+
