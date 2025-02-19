@@ -1,5 +1,5 @@
 # 日本語仮想キーボード (Japanese Virtual Keyboard)
-![仮想キーボードの画像](images/image01.png)
+![仮想キーボードの画像](screenshot/image01.png)
 
 
 ## 概要
