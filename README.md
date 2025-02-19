@@ -19,29 +19,37 @@ yarn  add  japanese-vkeyboard
 ## 基本的な使用方法
 
 ```tsx
-import React, { useState } from  'react';
-import VKeyboard from  'japanese-virtual-keyboard';
-const  App  = () => {
-const [inputValue, setInputValue] =  useState('');
-return (
-<div>
-<input
-type="text"
-value={inputValue}
-onChange={(e) =>  setInputValue(e.target.value)}
-placeholder="ここに入力されます"
-/>
-<VKeyboard
-value={inputValue}
-onChange={setInputValue}
-keyboardType="hirakey"
-enableConversion={true}
-/>
-</div>
-);
+import React, {
+	useState
+}
+from 'react';
+import VKeyboard from 'japanese-virtual-keyboard';
+const App = () => {
+	const [inputValue, setInputValue] = useState('');
+	return ( < div >
+		< input type = "text"
+		value = {
+			inputValue
+		}
+		onChange = {
+			(e) => setInputValue(e.target.value)
+		}
+		placeholder = "ここに入力されます" / >
+		< VKeyboard value = {
+			inputValue
+		}
+		onChange = {
+			setInputValue
+		}
+		keyboardType = "hirakey"
+		enableConversion = {
+			true
+		}
+		/> < /div>
+	);
 };
 
-export  default App;
+export default App;
 ```
 ## プロパティ
 | プロパティ | 型 | デフォルト値 | 説明 |
