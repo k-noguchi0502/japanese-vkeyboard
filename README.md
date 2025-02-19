@@ -78,13 +78,10 @@ japanese-vkeyboard/
 │   │   ├── types.ts
 │   │   └── utils.ts
 │   └── VirtualKeyboard.tsx
-├── app/
-│   └── page.tsx
 ├── tsconfig.json
 ├── rollup.config.js
 └── package.json
 ```
-この構造により、コードの整理と保守が容易になります。
 
 ## カスタマイズ
 スタイルのカスタマイズは、CSSモジュールを上書きすることで可能です。詳細は[スタイリングガイド](./STYLING.md)を参照してください。
