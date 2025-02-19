@@ -67,19 +67,19 @@ export default App;
 ## ファイル構造
 japanese-vkeyboard/
 ├── src/
-│ ├── components/
-│ │ ├── HiraganaKeyboard.tsx
-│ │ ├── TenkeyKeyboard.tsx
-│ │ └── DeleteIcon.tsx
-│ ├── styles/
-│ │ └── virtual-keyboard.module.css
-│ ├── utils/
-│ │ ├── constants.ts
-│ │ ├── types.ts
-│ │ └── utils.ts
-│ └── VirtualKeyboard.tsx
+│   ├── components/
+│   │   ├── HiraganaKeyboard.tsx
+│   │   ├── TenkeyKeyboard.tsx
+│   │   └── DeleteIcon.tsx
+│   ├── styles/
+│   │   └── virtual-keyboard.module.css
+│   ├── utils/
+│   │   ├── constants.ts
+│   │   ├── types.ts
+│   │   └── utils.ts
+│   └── VirtualKeyboard.tsx
 ├── app/
-│ └── page.tsx
+│   └── page.tsx
 ├── tsconfig.json
 ├── rollup.config.js
 └── package.json
