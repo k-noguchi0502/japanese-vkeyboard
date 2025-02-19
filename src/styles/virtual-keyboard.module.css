@@ -1,0 +1,557 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap");
+
+.container {
+  width: 100%;
+  height: 100%;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+  background-color: #f2f2f7;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.container.disabled {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.inputDisplay {
+  padding: 10px;
+  font-size: 18px;
+  background-color: #ffffff;
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+}
+
+.cursor {
+  display: inline-block;
+  width: 2px;
+  height: 20px;
+  background-color: #007aff;
+  margin-left: 2px;
+  animation: blink 0.7s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.inputArea {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  background-color: #ffffff;
+  border-radius: 10px 10px 10px 10px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.displayArea {
+  padding: 10px;
+  background-color: #ffffff;
+  min-height: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.confirmedText {
+  font-size: 18px;
+  color: #333;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+  margin-bottom: 5px;
+}
+
+.inputText {
+  font-size: 18px;
+  color: #007aff;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  width: 100%;
+}
+
+.keyboardWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background-color: #d1d1d6;
+  padding: 8px;
+  box-shadow: none;
+  min-height: 200px;
+}
+
+.candidateArea {
+  flex: 0 0 auto;
+  background-color: #ffffff;
+  padding: 10px;
+  transition: all 0.3s ease;
+  border-top: 1px solid #e5e5ea;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+}
+
+.candidateArea.disabled {
+  display: none;
+}
+
+.placeholderText {
+  color: #999;
+  text-align: center;
+  width: 100%;
+}
+
+.candidateList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  max-height: 88px;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.candidateItem {
+  padding: 5px 10px;
+  background-color: #f2f2f7;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  white-space: nowrap;
+  color: #007aff;
+}
+
+.candidateItem:hover {
+  background-color: #e5e5ea;
+}
+
+.keyboard {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+  padding-top: 8px;
+}
+
+.hirakey {
+  flex-direction: row;
+  width: 100%;
+}
+
+.hirakey .column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hirakey .key {
+  width: 100%;
+  height: calc(20% - 6.67px);
+}
+
+.tenkey {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.tenkeyGrid {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  gap: 8px;
+}
+
+.tenkeyWrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+
+.tenkeyWrapper .tenkeyGrid {
+  justify-content: center;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.tenkeyColumn {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tenkeyKey {
+  flex: 1;
+  width: 100%;
+  height: calc(25% - 6px);
+  min-width: 40px;
+  min-height: 40px;
+  aspect-ratio: 1 / 1;
+  font-size: min(4vw, 4vh, 32px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0;
+}
+
+.tenkeyKey:hover {
+  background-color: #f2f2f7;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.tenkeyKey:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.tenkeyKey.deleteKey {
+  background-color: #007aff;
+  color: #ffffff;
+}
+
+.tenkeyKey.deleteKey:hover {
+  background-color: #0056b3;
+}
+
+.tenkey .key {
+  height: calc(25% - 6px) !important;
+}
+
+.column {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.row {
+  flex: 1;
+  display: flex;
+  gap: 8px;
+}
+
+.key {
+  flex: none;
+  width: 100%;
+  height: calc(20% - 6.67px);
+  min-width: 30px;
+  min-height: 30px;
+  border: none;
+  border-radius: 8px;
+  background-color: #ffffff;
+  color: #000000;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.confirmKey {
+  height: calc(40% - 6.67px);
+}
+
+.key:hover {
+  background-color: #f2f2f7;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.key:active {
+  transform: translateY(1px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.functionKey {
+  background-color: #007aff;
+  color: #ffffff;
+  font-weight: 500;
+}
+
+.functionKey:hover {
+  background-color: #0056b3;
+}
+
+.deleteKey,
+.convertKey,
+.confirmKey {
+  background-color: #007aff;
+  color: #ffffff;
+}
+
+.deleteKey:hover,
+.convertKey:hover,
+.confirmKey:hover {
+  background-color: #0056b3;
+}
+
+.key.disabled,
+.key.disabled:hover {
+  background-color: #f2f2f7;
+  color: #8e8e93;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #c7c7cc;
+  border-radius: 10px;
+  font-size: 16px;
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.autoResizeFont {
+  font-size: min(4vw, 4vh, 24px);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.deleteKey {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deleteKey svg {
+  width: 100%;
+  height: 100%;
+  max-width: 24px;
+  max-height: 24px;
+}
+
+.tenkeyKey.deleteKey {
+  padding: 0;
+}
+
+.tenkeyKey.deleteKey svg {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.hirakey .deleteKey svg {
+  max-width: 20px;
+  max-height: 20px;
+}
+
+.hirakey .key.confirmKey {
+  height: calc(40% - 6.67px);
+  background-color: #007aff;
+  color: #ffffff;
+}
+
+.hirakey .key.confirmKey:hover {
+  background-color: #0056b3;
+}
+
+.disabledKey {
+  background-color: #e0e0e6;
+  color: #a0a0a6;
+  cursor: not-allowed;
+  opacity: 0.8;
+  box-shadow: none;
+  border: 1px solid #d0d0d6;
+}
+
+.disabledKey:hover {
+  background-color: #e0e0e6;
+  transform: none;
+  box-shadow: none;
+}
+
+/* Dark mode styles */
+.container.dark {
+  background-color: #1c1c1e;
+  color: #ffffff;
+}
+
+.container.dark .keyboardWrapper {
+  background-color: #2c2c2e;
+}
+
+.container.dark .inputArea,
+.container.dark .displayArea {
+  background-color: #1c1c1e;
+}
+
+.container.dark .inputText {
+  color: #0a84ff;
+}
+
+.container.dark .confirmedText {
+  color: #fff;
+}
+
+.container.dark .candidateArea {
+  background-color: #1c1c1e;
+  border-top-color: #38383a;
+}
+
+.container.dark .candidateArea.disabled {
+  background-color: #1c1c1e;
+  border-color: #38383a;
+}
+
+.container.dark .placeholderText {
+  color: #777;
+}
+
+.container.dark .candidateItem {
+  background-color: #2c2c2e;
+  color: #0a84ff;
+}
+
+.container.dark .candidateItem:hover {
+  background-color: #3a3a3c;
+}
+
+.container.dark .key {
+  background-color: #3a3a3c;
+  color: #ffffff;
+}
+
+.container.dark .key:hover {
+  background-color: #48484a;
+}
+
+.container.dark .key:active {
+  background-color: #48484a;
+}
+
+.container.dark .functionKey {
+  background-color: #0a84ff;
+  color: #ffffff;
+}
+
+.container.dark .functionKey:hover {
+  background-color: #0056b3;
+}
+
+.container.dark .deleteKey,
+.container.dark .convertKey,
+.container.dark .confirmKey {
+  background-color: #0a84ff;
+}
+
+.container.dark .deleteKey:hover,
+.container.dark .convertKey:hover,
+.container.dark .confirmKey:hover {
+  background-color: #0056b3;
+}
+
+.container.dark .key.disabled,
+.container.dark .key.disabled:hover {
+  background-color: #2c2c2e;
+  color: #8e8e93;
+}
+
+.container.dark .input {
+  border-color: #48484a;
+  color: #eee;
+  background-color: #1c1c1e;
+}
+
+.container.dark .tenkeyKey {
+  background-color: #3a3a3c;
+  color: #ffffff;
+}
+
+.container.dark .tenkeyKey:hover {
+  background-color: #48484a;
+}
+
+.container.dark .tenkeyKey:active {
+  background-color: #48484a;
+}
+
+.container.dark .tenkeyKey.deleteKey {
+  background-color: #0a84ff;
+}
+
+.container.dark .tenkeyKey.deleteKey:hover {
+  background-color: #0056b3;
+}
+
+.container.dark .disabledKey {
+  background-color: #3a3a3c;
+  color: #8e8e93;
+  border-color: #4a4a4c;
+}
+
+.container.dark .disabledKey:hover {
+  background-color: #3a3a3c;
+}
+
+@media (max-width: 768px) {
+  .tenkeyKey {
+    font-size: min(5vw, 5vh, 28px);
+  }
+
+  .tenkey .key {
+    font-size: min(5vw, 5vh, 28px);
+  }
+
+  .autoResizeFont {
+    font-size: min(5vw, 5vh, 20px);
+  }
+}
+
+@media (max-width: 480px) {
+  .key,
+  .tenkeyKey {
+    min-width: 25px;
+    min-height: 25px;
+    font-size: min(3vw, 3vh, 16px);
+  }
+
+  .autoResizeFont {
+    font-size: min(3vw, 3vh, 16px);
+  }
+
+  .keyboardWrapper {
+    min-height: 150px;
+  }
+}
+

@@ -1,5 +1,5 @@
 declare module "japanese-vkeyboard" {
-  import type { FC, ReactElement } from "react"
+  import type { FC } from "react"
 
   interface VKeyboardProps {
     value: string

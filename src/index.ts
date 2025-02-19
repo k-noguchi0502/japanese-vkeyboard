@@ -1,2 +1,2 @@
-export { default as VKeyboard } from "./virtual-keyboard"
+export { default as VKeyboard } from "./VirtualKeyboard"
 

@@ -1,40 +1,58 @@
-import typescript from '@rollup/plugin-typescript';
-import commonjs from '@rollup/plugin-commonjs';
-import resolve from '@rollup/plugin-node-resolve';
-import postcss from 'rollup-plugin-postcss';
-import dts from 'rollup-plugin-dts';
+import typescript from "@rollup/plugin-typescript"
+import commonjs from "@rollup/plugin-commonjs"
+import resolve from "@rollup/plugin-node-resolve"
+import postcss from "rollup-plugin-postcss"
+import dts from "rollup-plugin-dts"
+import { createFilter } from "@rollup/pluginutils"
+
+const clientModePlugin = () => {
+  const filter = createFilter("**/*.{ts,tsx}")
+  return {
+    name: "client-mode",
+    transform(code, id) {
+      if (filter(id) && code.includes("/* @jsx-mode client */")) {
+        return {
+          code: `"use client";\n${code}`,
+          map: { mappings: "" },
+        }
+      }
+    },
+  }
+}
 
 export default [
   {
-    input: 'src/virtual-keyboard.tsx',
+    input: "src/VirtualKeyboard.tsx",
     output: [
       {
-        file: 'dist/virtual-keyboard.js',
-        format: 'cjs',
+        file: "dist/virtual-keyboard.js",
+        format: "cjs",
         sourcemap: true,
-        exports: 'auto'
+        exports: "auto",
       },
       {
-        file: 'dist/virtual-keyboard.esm.js',
-        format: 'es',
+        file: "dist/virtual-keyboard.esm.js",
+        format: "es",
         sourcemap: true,
-        exports: 'auto'
+        exports: "auto",
       },
     ],
     plugins: [
+      clientModePlugin(),
       resolve(),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' }),
+      typescript({ tsconfig: "./tsconfig.json" }),
       postcss({
-        extensions: ['.css'],
+        extensions: [".css"],
         modules: true,
       }),
     ],
-    external: ['react'],
+    external: ["react", "next-themes"],
   },
   {
-    input: 'src/virtual-keyboard.tsx',
-    output: [{ file: 'dist/virtual-keyboard.d.ts', format: 'es' }],
+    input: "src/VirtualKeyboard.tsx",
+    output: [{ file: "dist/virtual-keyboard.d.ts", format: "es" }],
     plugins: [dts()],
   },
-];
+]
+
