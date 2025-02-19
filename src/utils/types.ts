@@ -22,6 +22,7 @@ export interface TenkeyKeyboardProps {
 
 export type DakutenMap = { [key: string]: string }
 export type HandakutenMap = { [key: string]: string }
+export type KomojiMap = { [key: string]: string }
 export type HiraganaLayout = (string | JSX.Element | null)[][]
 export type TenkeyLayout = (string | JSX.Element)[][]
 

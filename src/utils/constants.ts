@@ -1,6 +1,7 @@
-import type { DakutenMap, HandakutenMap, HiraganaLayout, TenkeyLayout } from "./types"
+import type { DakutenMap, HandakutenMap, KomojiMap, HiraganaLayout, TenkeyLayout } from "./types"
 
 export const dakutenMap: DakutenMap = {
+  う: "ゔ",
   か: "が",
   き: "ぎ",
   く: "ぐ",
@@ -31,6 +32,21 @@ export const handakutenMap: HandakutenMap = {
   ほ: "ぽ",
 }
 
+export const komojiMap: KomojiMap = {
+  あ: "ぁ",
+  い: "ぃ",
+  う: "ぅ",
+  え: "ぇ",
+  お: "ぉ",
+  か: "ゕ",
+  け: "ゖ",
+  つ: "っ",
+  や: "ゃ",
+  ゆ: "ゅ",
+  よ: "ょ",
+  わ: "ゎ",
+}
+
 export const hiraganaLayout: HiraganaLayout = [
   ["あ", "い", "う", "え", "お"],
   ["か", "き", "く", "け", "こ"],
@@ -42,7 +58,7 @@ export const hiraganaLayout: HiraganaLayout = [
   ["や", "ゆ", "よ", null, null],
   ["ら", "り", "る", "れ", "ろ"],
   ["わ", "を", "ん", null, null],
-  ["delete", "゛", "゜", "確定"],
+  ["delete", "゛゜", "小", "確定"],
 ]
 
 export const tenkeyLayout: TenkeyLayout = [

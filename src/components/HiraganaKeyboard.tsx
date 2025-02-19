@@ -4,7 +4,7 @@
 
 import React, { useState, useCallback, useEffect, useMemo } from "react"
 import styles from "../styles/virtual-keyboard.module.css"
-import { dakutenMap, handakutenMap, hiraganaLayout } from "../utils/constants"
+import { dakutenMap, handakutenMap, hiraganaLayout, komojiMap } from "../utils/constants"
 import { fetchCandidates } from "../utils/utils"
 
 interface HiraganaKeyboardProps {
@@ -35,15 +35,18 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
   const [showCandidates, setShowCandidates] = useState(false)
   const [canApplyDakuten, setCanApplyDakuten] = useState(false)
   const [canApplyHandakuten, setCanApplyHandakuten] = useState(false)
+  const [canApplyKomoji, setCanApplyKomoji] = useState(false)
 
   const combineCharacters = useCallback((text: string): string => {
-    return text.replace(/(.)([゛゜])/g, (_, char, diacritic) => {
-      if (diacritic === "゛" && char in dakutenMap) {
+    return text.replace(/(.)([゛゜小])/g, (_, char, modifier) => {
+      if (modifier === "゛" && char in dakutenMap) {
         return dakutenMap[char as keyof typeof dakutenMap]
-      } else if (diacritic === "゜" && char in handakutenMap) {
+      } else if (modifier === "゜" && char in handakutenMap) {
         return handakutenMap[char as keyof typeof handakutenMap]
+      } else if (modifier === "小" && char in komojiMap) {
+        return komojiMap[char as keyof typeof komojiMap]
       }
-      return char + diacritic
+      return char + modifier
     })
   }, [])
 
@@ -53,11 +56,10 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
 
       setActiveKey(typeof key === "string" ? key : "delete")
       let newInputText = inputText
-
+      const lastChar = newInputText.slice(-1)
       if (typeof key === "string") {
         if (key === "゛" || key === "゜") {
           if (newInputText.length > 0) {
-            const lastChar = newInputText.slice(-1)
             if (lastChar in dakutenMap || lastChar in handakutenMap) {
               let newChar = lastChar
               if (key === "゛") {
@@ -70,11 +72,21 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
           }
         } else if (key === "delete") {
           newInputText = newInputText.slice(0, -1)
+        } else if (key === "小") {
+          if (newInputText.length > 0) {
+            const lastChar = newInputText.slice(-1)
+            if (lastChar in komojiMap) {
+              const newChar = komojiMap[lastChar as keyof typeof komojiMap]
+              newInputText = newInputText.slice(0, -1) + newChar
+            } else {
+              // 小文字化できない場合は何もしない
+            }
+          }
         } else if (key === "確定") {
           onKeyPress("確定")
           onCandidateSelect(combineCharacters(newInputText))
           newInputText = ""
-        } else if (key !== "delete" && key !== "確定") {
+        } else if (typeof key === "string" && key !== "delete" && key !== "確定" && key !== "小") {
           newInputText += key
         }
       } else if (React.isValidElement(key)) {
@@ -119,9 +131,11 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
       const lastChar = inputText.slice(-1)
       setCanApplyDakuten(lastChar in dakutenMap)
       setCanApplyHandakuten(lastChar in handakutenMap)
+      setCanApplyKomoji(lastChar in komojiMap)
     } else {
       setCanApplyDakuten(false)
       setCanApplyHandakuten(false)
+      setCanApplyKomoji(false)
     }
   }, [inputText])
 
@@ -131,11 +145,49 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
         {hiraganaLayout.map((column, columnIndex) => (
           <div key={`column-${columnIndex}`} className={styles.column}>
             {column.map((key, keyIndex) => {
+              if (key === "゛゜") {
+                return (
+                  <div key={`${columnIndex}-${keyIndex}-diacritics`} className={styles.diacriticsContainer}>
+                    <button
+                      key={`${columnIndex}-${keyIndex}-dakuten`}
+                      className={`${styles.diacriticKey} ${!canApplyDakuten ? styles.disabledDiacritic : ""}`}
+                      onClick={() => !disabled && canApplyDakuten && handleKeyPress("゛")}
+                      disabled={disabled || !canApplyDakuten}
+                    >
+                      ゛
+                    </button>
+                    <button
+                      key={`${columnIndex}-${keyIndex}-handakuten`}
+                      className={`${styles.diacriticKey} ${!canApplyHandakuten ? styles.disabledDiacritic : ""}`}
+                      onClick={() => !disabled && canApplyHandakuten && handleKeyPress("゜")}
+                      disabled={disabled || !canApplyHandakuten}
+                    >
+                      ゜
+                    </button>
+                  </div>
+                )
+              } else if (key === "小") {
+                return (
+                  <button
+                    key={`${columnIndex}-${keyIndex}-small`}
+                    className={`${styles.key} ${styles.diacriticsKey} ${!canApplyKomoji ? styles.disabledDiacritic : ""}`}
+                    onClick={() => !disabled && canApplyKomoji && handleKeyPress("小")}
+                    disabled={disabled || !canApplyKomoji}
+                  >
+                    小
+                  </button>
+                )
+              }
               const isDakuten = key === "゛"
               const isHandakuten = key === "゜"
+              const isKomoji = key === "小"
               const isNull = key === null
               const isDisabled =
-                disabled || isNull || (isDakuten && !canApplyDakuten) || (isHandakuten && !canApplyHandakuten)
+                disabled ||
+                isNull ||
+                (isDakuten && !canApplyDakuten) ||
+                (isHandakuten && !canApplyHandakuten) ||
+                (key === "小" && !canApplyKomoji)
               return (
                 <button
                   key={`${columnIndex}-${keyIndex}-${key || "empty"}`}
@@ -153,7 +205,7 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
         ))}
       </div>
     ),
-    [handleKeyPress, disabled, renderKey, theme, canApplyDakuten, canApplyHandakuten],
+    [handleKeyPress, disabled, renderKey, theme, canApplyDakuten, canApplyHandakuten, canApplyKomoji],
   )
 
   return (

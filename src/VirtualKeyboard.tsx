@@ -1,6 +1,9 @@
+"use client"
+
 /* @jsx-mode client */
 
-import React, { useState, useCallback, useMemo, useEffect } from "react"
+import React from "react"
+import { useState, useCallback, useMemo, useEffect } from "react"
 import { useTheme } from "next-themes"
 import styles from "./styles/virtual-keyboard.module.css"
 import HiraganaKeyboard from "./components/HiraganaKeyboard"
@@ -45,6 +48,7 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
 }) => {
   const [inputText, setInputText] = useState("")
   const [isFocused, setIsFocused] = useState(autoFocus)
+  // const [showSmallCharacters, setShowSmallCharacters] = useState(false) // Removed
   const { theme } = useTheme()
 
   const handleKeyPress = useCallback(
@@ -139,8 +143,22 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       renderKey,
       theme,
       inputMode,
+      // showSmallCharacters, // Removed
+      // setShowSmallCharacters, // Removed
     }),
-    [inputText, handleKeyPress, enableConversion, value, handleCandidateSelect, disabled, renderKey, theme, inputMode],
+    [
+      inputText,
+      handleKeyPress,
+      enableConversion,
+      value,
+      handleCandidateSelect,
+      disabled,
+      renderKey,
+      theme,
+      inputMode,
+      // showSmallCharacters, // Removed
+      // setShowSmallCharacters, // Removed
+    ],
   )
 
   useEffect(() => {
@@ -159,7 +177,11 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
     >
       <div className={styles.keyboardWrapper}>
         {keyboardType === "hirakey" ? (
-          <HiraganaKeyboard {...keyboardProps} />
+          <HiraganaKeyboard
+            {...keyboardProps}
+            // showSmallCharacters={showSmallCharacters} // Removed
+            // setShowSmallCharacters={setShowSmallCharacters} // Removed
+          />
         ) : (
           <TenkeyKeyboard
             onKeyPress={handleKeyPress}
@@ -175,3 +197,4 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
 }
 
 export default VKeyboard
+
