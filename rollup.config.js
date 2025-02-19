@@ -28,13 +28,13 @@ export default [
         file: "dist/virtual-keyboard.js",
         format: "cjs",
         sourcemap: true,
-        exports: "auto",
+        exports: "named",
       },
       {
         file: "dist/virtual-keyboard.esm.js",
         format: "es",
         sourcemap: true,
-        exports: "auto",
+        exports: "named",
       },
     ],
     plugins: [
@@ -45,6 +45,9 @@ export default [
       postcss({
         extensions: [".css"],
         modules: true,
+        extract: true,
+        minimize: true,
+        sourceMap: true,
       }),
     ],
     external: ["react", "next-themes"],

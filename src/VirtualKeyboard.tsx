@@ -1,8 +1,4 @@
-"use client"
-
-/* @jsx-mode client */
-
-import React from "react"
+import type React from "react"
 import { useState, useCallback, useMemo, useEffect } from "react"
 import { useTheme } from "next-themes"
 import styles from "./styles/virtual-keyboard.module.css"

@@ -1,7 +1,3 @@
-"use client"
-
-/* @jsx-mode client */
-
 import React, { useState, useCallback } from "react"
 import styles from "../styles/virtual-keyboard.module.css"
 import { tenkeyLayout } from "../utils/constants"
