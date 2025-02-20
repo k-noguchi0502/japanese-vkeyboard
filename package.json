@@ -1,6 +1,6 @@
 {
   "name": "japanese-vkeyboard",
-  "version": "0.4.1",
+  "version": "0.4.4",
   "description": "A Japanese virtual keyboard component for React applications",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
