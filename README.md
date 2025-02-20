@@ -20,39 +20,28 @@ yarn  add  japanese-vkeyboard
 ```
 ## 基本的な使用方法
 
-```tsx
-import React, {
-	useState
-}
-from 'react';
-import VKeyboard from 'japanese-virtual-keyboard';
-const App = () => {
-	const [inputValue, setInputValue] = useState('');
-	return ( < div >
-		< input type = "text"
-		value = {
-			inputValue
-		}
-		onChange = {
-			(e) => setInputValue(e.target.value)
-		}
-		placeholder = "ここに入力されます" / >
-		< VKeyboard value = {
-			inputValue
-		}
-		onChange = {
-			setInputValue
-		}
-		keyboardType = "hirakey"
-		enableConversion = {
-			true
-		}
-		/> < /div>
-	);
-};
+```ts
+"use client"
 
-export default App;
+import { useState } from  "react"
+import { VKeyboard } from  "japanese-vkeyboard"
+import  "japanese-vkeyboard/dist/virtual-keyboard.css"
+
+export  default  function  ExamplePage() {
+const [inputValue, setInputValue] =  useState("")
+const  handleChange  = (value:  string) => { setInputValue(value) }
+return (
+	<div  className="container mx-auto p-4">
+		<h1  className="text-2xl font-bold mb-4">VKeyboard Example</h1>
+		<div  className="mb-4">
+			<input type="text" value={inputValue} onChange={(e) =>  setInputValue(e.target.value)} className="w-full p-2 border border-gray-300 rounded" placeholder="Input will appear here" />
+		</div>
+		<VKeyboard  value={inputValue} onChange={handleChange} keyboardType="hirakey"  enableConversion={true} />
+	</div>
+		)
+}
 ```
+
 ## プロパティ
 | プロパティ | 型 | デフォルト値 | 説明 |
 |------------|------|--------------|------|
@@ -65,13 +54,18 @@ export default App;
 
 ## ファイル構造
 
-```markdown
-## ファイル構造
+```
 japanese-vkeyboard/
 ├── src/
 │   ├── components/
 │   │   ├── HiraganaKeyboard.tsx
-│   │   ├── TenkeyKeyboard.tsx
+│   │   └── TenkeyKeyboard.tsx
+│   ├── hooks/
+│   │   ├── useDiacriticState.ts
+│   │   ├── useKeyboardLogic.ts
+│   │   ├── useKeyboardNavigation.ts
+│   │   └── useKeyboardState.ts
+│   ├── icons/
 │   │   └── DeleteIcon.tsx
 │   ├── styles/
 │   │   └── virtual-keyboard.module.css
@@ -79,9 +73,16 @@ japanese-vkeyboard/
 │   │   ├── constants.ts
 │   │   ├── types.ts
 │   │   └── utils.ts
-│   └── VirtualKeyboard.tsx
+│   ├── VirtualKeyboard.tsx
+│   ├── client.ts
+│   └── index.ts
+├── app/
+│   ├── example.tsx
+│   ├── layout.tsx
+│   └── page.tsx
 ├── tsconfig.json
 ├── rollup.config.js
+├── postcss.config.js
 └── package.json
 ```
 

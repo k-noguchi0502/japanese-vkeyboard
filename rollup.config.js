@@ -3,59 +3,44 @@ import commonjs from "@rollup/plugin-commonjs"
 import resolve from "@rollup/plugin-node-resolve"
 import postcss from "rollup-plugin-postcss"
 import dts from "rollup-plugin-dts"
-import { createFilter } from "@rollup/pluginutils"
-
-const clientModePlugin = () => {
-  const filter = createFilter("**/*.{ts,tsx}")
-  return {
-    name: "client-mode",
-    transform(code, id) {
-      if (filter(id) && code.includes("/* @jsx-mode client */")) {
-        return {
-          code: `"use client";\n${code}`,
-          map: { mappings: "" },
-        }
-      }
-    },
-  }
-}
 
 export default [
   {
-    input: "src/VirtualKeyboard.tsx",
+    input: "src/index.ts",
     output: [
       {
-        file: "dist/virtual-keyboard.js",
+        file: "dist/index.js",
         format: "cjs",
         sourcemap: true,
         exports: "named",
       },
       {
-        file: "dist/virtual-keyboard.esm.js",
+        file: "dist/index.esm.js",
         format: "es",
         sourcemap: true,
-        exports: "named",
       },
     ],
     plugins: [
-      clientModePlugin(),
       resolve(),
       commonjs(),
       typescript({ tsconfig: "./tsconfig.json" }),
       postcss({
-        extensions: [".css"],
         modules: true,
-        extract: true,
+        extract: "virtual-keyboard.css",
         minimize: true,
         sourceMap: true,
+        extensions: [".css"],
+        config: {
+          path: "./postcss.config.js",
+        },
       }),
     ],
-    external: ["react", "next-themes"],
+    external: ["react", "react-dom", "next-themes"],
   },
   {
-    input: "src/VirtualKeyboard.tsx",
-    output: [{ file: "dist/virtual-keyboard.d.ts", format: "es" }],
+    input: "src/index.ts",
+    output: [{ file: "dist/index.d.ts", format: "es" }],
     plugins: [dts()],
+    external: [/\.css$/],
   },
 ]
-

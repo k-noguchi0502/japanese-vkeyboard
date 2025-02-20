@@ -5,22 +5,32 @@ import { tenkeyLayout } from "../utils/constants"
 interface TenkeyKeyboardProps {
   onKeyPress: (key: string) => void
   disabled?: boolean
-  renderKey?: (key: string | JSX.Element | null) => React.ReactNode
+  renderKey?: (key: string | JSX.Element | null) => JSX.Element
   theme: string | undefined
+  inputMode?: string
+  placeholder?: string
   className?: string
-  inputMode?: "text" | "search"
+  candidates?: string[]
 }
 
+/**
+ * TenkeyKeyboard: テンキー入力用のキーボードコンポーネント
+ *
+ * このコンポーネントは、数字や記号の入力に特化したテンキーレイアウトを提供します。
+ */
 const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
   onKeyPress,
   disabled,
-  renderKey = (key) => key,
+  renderKey = (key) => <>{key}</>,
   theme,
-  className,
   inputMode,
+  placeholder,
+  className,
+  candidates,
 }) => {
   const [activeKey, setActiveKey] = useState<string | null>(null)
 
+  // キー押下時の処理
   const handleKeyPress = useCallback(
     (key: string | JSX.Element) => {
       if (disabled) return
@@ -49,6 +59,7 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
                   onClick={() => handleKeyPress(key)}
                   disabled={disabled}
                   type="button"
+                  aria-label={typeof key === "string" ? key : "削除"}
                 >
                   {renderKey(key)}
                 </button>
@@ -62,4 +73,3 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
 }
 
 export default React.memo(TenkeyKeyboard)
-

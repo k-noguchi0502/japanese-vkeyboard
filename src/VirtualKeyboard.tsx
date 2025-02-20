@@ -1,15 +1,16 @@
-import type React from "react"
-import { useState, useCallback, useMemo, useEffect } from "react"
+import React, { useMemo } from "react"
 import { useTheme } from "next-themes"
-import styles from "./styles/virtual-keyboard.module.css"
 import HiraganaKeyboard from "./components/HiraganaKeyboard"
 import TenkeyKeyboard from "./components/TenkeyKeyboard"
-import DeleteIcon from "./components/DeleteIcon"
+import DeleteIcon from "./icons/DeleteIcon"
 import type { KeyboardType } from "./utils/types"
-import { dakutenMap, handakutenMap, hiraganaLayout, tenkeyLayout } from "./utils/constants"
+import { dakutenMap, handakutenMap, hiraganaLayout, katakanaLayout, tenkeyLayout } from "./utils/constants"
 import { fetchCandidates } from "./utils/utils"
+import { useKeyboardLogic } from "./hooks/useKeyboardLogic"
+import { useKeyboardState } from "./hooks/useKeyboardState"
+import styles from "./styles/virtual-keyboard.module.css"
 
-export { dakutenMap, handakutenMap, hiraganaLayout, tenkeyLayout, fetchCandidates }
+export { dakutenMap, handakutenMap, hiraganaLayout, katakanaLayout, tenkeyLayout, fetchCandidates }
 
 export interface VKeyboardProps {
   value: string
@@ -25,8 +26,15 @@ export interface VKeyboardProps {
   onBlur?: () => void
   inputMode?: "text" | "search"
   onKeyDown?: (e: React.KeyboardEvent<HTMLDivElement>) => void
+  theme?: string
 }
 
+/**
+ * VKeyboard: 仮想キーボードのメインコンポーネント
+ *
+ * このコンポーネントは、日本語入力用の仮想キーボードを提供します。
+ * ひらがな、カタカナ、アルファベット、テンキーの入力モードをサポートしています。
+ */
 const VKeyboard: React.FC<VKeyboardProps> = ({
   value,
   onChange,
@@ -41,92 +49,40 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
   onBlur,
   inputMode = "text",
   onKeyDown,
+  theme: propTheme,
 }) => {
-  const [inputText, setInputText] = useState("")
-  const [isFocused, setIsFocused] = useState(autoFocus)
-  // const [showSmallCharacters, setShowSmallCharacters] = useState(false) // Removed
-  const { theme } = useTheme()
+  const { theme: systemTheme } = useTheme()
+  const theme = propTheme || systemTheme
 
-  const handleKeyPress = useCallback(
-    (key: string) => {
-      if (disabled) return
+  const {
+    isFocused,
+    kanaMode,
+    setKanaMode,
+    alphabetCase,
+    setAlphabetCase,
+    handleFocus,
+    handleBlur,
+    handleKeyDown: internalHandleKeyDown,
+  } = useKeyboardState(autoFocus, disabled, onFocus, onBlur, onKeyDown)
 
-      let newValue = value
-      let newInputText = inputText
-
-      if (keyboardType === "hirakey") {
-        switch (key) {
-          case "delete":
-            if (inputText.length > 0) {
-              newInputText = inputText.slice(0, -1)
-            } else if (value.length > 0) {
-              newValue = value.slice(0, -1)
-            }
-            break
-          case "確定":
-            if (inputText) {
-              newValue += inputText
-              newInputText = ""
-            }
-            break
-          default:
-            if (key.length === 1) {
-              newInputText += key
-            } else {
-              newValue += key
-              newInputText = ""
-            }
-        }
-      } else {
-        if (key === "delete") {
-          newValue = value.slice(0, -1)
-        } else if (key !== "確定") {
-          newValue += key
-        }
-      }
-
-      setInputText(newInputText)
-      onChange(maxLength ? newValue.slice(0, maxLength) : newValue)
-    },
-    [onChange, inputText, value, keyboardType, disabled, maxLength],
+  const { inputText, setInputText, handleKeyPress, handleCandidateSelect, candidates } = useKeyboardLogic(
+    value,
+    onChange,
+    keyboardType,
+    kanaMode,
+    maxLength,
+    disabled,
   )
 
-  const handleCandidateSelect = useCallback(
-    (candidate: string) => {
-      if (disabled) return
-      const newValue = value + candidate
-      onChange(maxLength ? newValue.slice(0, maxLength) : newValue)
-      setInputText("")
-    },
-    [value, onChange, disabled, maxLength],
-  )
-
-  const handleFocus = useCallback(() => {
-    if (!disabled) {
-      setIsFocused(true)
-      onFocus?.()
-    }
-  }, [disabled, onFocus])
-
-  const handleBlur = useCallback(() => {
-    setIsFocused(false)
-    onBlur?.()
-  }, [onBlur])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent<HTMLDivElement>) => {
-      onKeyDown?.(e)
-    },
-    [onKeyDown],
-  )
-
-  const renderKey = useCallback((key: string | JSX.Element | null): React.ReactNode => {
+  // キーのレンダリング
+  const renderKey = (key: string | JSX.Element | null): JSX.Element => {
     if (key === "delete") {
       return <DeleteIcon />
     }
-    return key
-  }, [])
+    return <>{key}</>
+  }
 
+  // キーボードのプロパティ
   const keyboardProps = useMemo(
     () => ({
       inputText,
@@ -139,11 +95,16 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       renderKey,
       theme,
       inputMode,
-      // showSmallCharacters, // Removed
-      // setShowSmallCharacters, // Removed
+      kanaMode,
+      setKanaMode,
+      alphabetCase,
+      setAlphabetCase,
+      placeholder,
+      candidates,
     }),
     [
       inputText,
+      setInputText,
       handleKeyPress,
       enableConversion,
       value,
@@ -152,14 +113,14 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       renderKey,
       theme,
       inputMode,
-      // showSmallCharacters, // Removed
-      // setShowSmallCharacters, // Removed
+      kanaMode,
+      setKanaMode,
+      alphabetCase,
+      setAlphabetCase,
+      placeholder,
+      candidates,
     ],
   )
-
-  useEffect(() => {
-    // テーマが変更されたときに再レンダリングをトリガー
-  }, [])
 
   return (
     <div
@@ -169,15 +130,13 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       tabIndex={disabled ? -1 : 0}
       onFocus={handleFocus}
       onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
+      onKeyDown={internalHandleKeyDown}
+      role="application"
+      aria-label="仮想キーボード"
     >
       <div className={styles.keyboardWrapper}>
         {keyboardType === "hirakey" ? (
-          <HiraganaKeyboard
-            {...keyboardProps}
-            // showSmallCharacters={showSmallCharacters} // Removed
-            // setShowSmallCharacters={setShowSmallCharacters} // Removed
-          />
+          <HiraganaKeyboard {...keyboardProps} />
         ) : (
           <TenkeyKeyboard
             onKeyPress={handleKeyPress}
@@ -185,6 +144,8 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
             renderKey={renderKey}
             theme={theme}
             inputMode={inputMode}
+            placeholder={placeholder}
+            candidates={candidates}
           />
         )}
       </div>
@@ -192,5 +153,4 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
   )
 }
 
-export default VKeyboard
-
+export default React.memo(VKeyboard)
