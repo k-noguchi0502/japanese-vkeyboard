@@ -1,5 +1,5 @@
 # 日本語仮想キーボード (Japanese Virtual Keyboard)
-![仮想キーボードの画像](screenshots/image01.png)
+![仮想キーボードの画像](https://imgur.com/mCffSGJ.png)
 
 
 ## 概要
