@@ -2,6 +2,7 @@ import typescript from "@rollup/plugin-typescript"
 import commonjs from "@rollup/plugin-commonjs"
 import resolve from "@rollup/plugin-node-resolve"
 import postcss from "rollup-plugin-postcss"
+import json from "@rollup/plugin-json"
 import dts from "rollup-plugin-dts"
 
 export default [
@@ -34,6 +35,7 @@ export default [
           path: "./postcss.config.js",
         },
       }),
+      json(),
     ],
     external: ["react", "react-dom", "next-themes"],
   },

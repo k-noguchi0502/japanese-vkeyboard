@@ -126,39 +126,17 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
     ],
   )
 
-  const preventDefaultHandler = useCallback((e: React.SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
-
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLButtonElement>, key: string | JSX.Element | null) => {
-      e.preventDefault()
-      if (key !== null) {
-        handleKeyPress(key)
-      }
-    },
-    [handleKeyPress],
-  )
-
   const handleCandidateSelect = useCallback(
     (candidate: string) => {
       if (disabled) return
       console.log("選択された候補:", candidate)
+      // 変換候補をそのまま使用し、combineCharacters関数を適用しない
       onCandidateSelect(candidate)
       setInputText("")
       setCandidates([])
       setShowCandidates(false)
     },
     [onCandidateSelect, setInputText, disabled],
-  )
-
-  const handleCandidateTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLButtonElement>, candidate: string) => {
-      e.preventDefault()
-      handleCandidateSelect(candidate)
-    },
-    [handleCandidateSelect],
   )
 
   useEffect(() => {
@@ -195,11 +173,6 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
         tabIndex={0}
         role="grid"
         aria-label="仮想キーボード"
-        onContextMenu={preventDefaultHandler}
-        onTouchStart={preventDefaultHandler}
-        onTouchMove={preventDefaultHandler}
-        onTouchEnd={preventDefaultHandler}
-        onTouchCancel={preventDefaultHandler}
       >
         {currentLayout.map((column, columnIndex) => (
           <div key={`column-${columnIndex}`} className={styles.column} role="row">
@@ -268,7 +241,6 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
                     focusedKey === `${columnIndex}-${keyIndex}` ? styles.focused : ""
                   }`}
                   onClick={() => !isDisabled && key !== null && handleKeyPress(key)}
-                  onTouchStart={(e) => !isDisabled && handleTouchStart(e, key)}
                   disabled={isDisabled}
                   role="gridcell"
                   aria-label={typeof key === "string" ? key : ""}
@@ -294,8 +266,6 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
     alphabetCase,
     focusedKey,
     handleKeyDown,
-    handleTouchStart,
-    preventDefaultHandler,
   ])
 
   return (
@@ -319,7 +289,6 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
                     key={index}
                     className={styles.candidateItem}
                     onClick={() => handleCandidateSelect(candidate)}
-                    onTouchStart={(e) => handleCandidateTouchStart(e, candidate)}
                     disabled={disabled}
                     role="option"
                   >

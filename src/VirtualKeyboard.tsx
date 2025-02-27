@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from "react"
+import React, { useMemo } from "react"
 import { useTheme } from "next-themes"
 import HiraganaKeyboard from "./components/HiraganaKeyboard"
 import TenkeyKeyboard from "./components/TenkeyKeyboard"
@@ -29,6 +29,12 @@ export interface VKeyboardProps {
   theme?: string
 }
 
+/**
+ * VKeyboard: 仮想キーボードのメインコンポーネント
+ *
+ * このコンポーネントは、日本語入力用の仮想キーボードを提供します。
+ * ひらがな、カタカナ、アルファベット、テンキーの入力モードをサポートしています。
+ */
 const VKeyboard: React.FC<VKeyboardProps> = ({
   value,
   onChange,
@@ -68,13 +74,15 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
     disabled,
   )
 
-  const renderKey = useCallback((key: string | JSX.Element | null): JSX.Element => {
+  // キーのレンダリング
+  const renderKey = (key: string | JSX.Element | null): JSX.Element => {
     if (key === "delete") {
-      return <DeleteIcon key="delete-icon" />
+      return <DeleteIcon />
     }
-    return <React.Fragment key={key?.toString() || "empty-key"}>{key}</React.Fragment>
-  }, [])
+    return <>{key}</>
+  }
 
+  // キーボードのプロパティ
   const keyboardProps = useMemo(
     () => ({
       inputText,
@@ -102,6 +110,7 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       value,
       handleCandidateSelect,
       disabled,
+      renderKey,
       theme,
       inputMode,
       kanaMode,
@@ -110,14 +119,8 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       setAlphabetCase,
       placeholder,
       candidates,
-      renderKey,
     ],
   )
-
-  const preventDefaultHandler = useCallback((e: React.SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
 
   return (
     <div
@@ -130,17 +133,6 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       onKeyDown={internalHandleKeyDown}
       role="application"
       aria-label="仮想キーボード"
-      style={{
-        WebkitTouchCallout: "none",
-        WebkitUserSelect: "none",
-        userSelect: "none",
-        touchAction: "none",
-      }}
-      onContextMenu={preventDefaultHandler}
-      onTouchStart={preventDefaultHandler}
-      onTouchMove={preventDefaultHandler}
-      onTouchEnd={preventDefaultHandler}
-      onTouchCancel={preventDefaultHandler}
     >
       <div className={styles.keyboardWrapper}>
         {keyboardType === "hirakey" ? (
@@ -162,4 +154,3 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
 }
 
 export default React.memo(VKeyboard)
-

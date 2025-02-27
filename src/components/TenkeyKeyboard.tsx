@@ -1,7 +1,6 @@
 import React, { useState, useCallback } from "react"
 import styles from "../styles/virtual-keyboard.module.css"
 import { tenkeyLayout } from "../utils/constants"
-import type { JSX } from "react/jsx-runtime"
 
 interface TenkeyKeyboardProps {
   onKeyPress: (key: string) => void
@@ -14,6 +13,11 @@ interface TenkeyKeyboardProps {
   candidates?: string[]
 }
 
+/**
+ * TenkeyKeyboard: テンキー入力用のキーボードコンポーネント
+ *
+ * このコンポーネントは、数字や記号の入力に特化したテンキーレイアウトを提供します。
+ */
 const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
   onKeyPress,
   disabled,
@@ -26,6 +30,7 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
 }) => {
   const [activeKey, setActiveKey] = useState<string | null>(null)
 
+  // キー押下時の処理
   const handleKeyPress = useCallback(
     (key: string | JSX.Element) => {
       if (disabled) return
@@ -38,28 +43,8 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
     [onKeyPress, disabled],
   )
 
-  const preventDefaultHandler = useCallback((e: React.SyntheticEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }, [])
-
-  const handleTouchStart = useCallback(
-    (e: React.TouchEvent<HTMLButtonElement>, key: string | JSX.Element) => {
-      e.preventDefault()
-      handleKeyPress(key)
-    },
-    [handleKeyPress],
-  )
-
   return (
-    <div
-      className={`${styles.tenkeyWrapper} ${theme === "dark" ? styles.dark : ""} ${className || ""}`}
-      onContextMenu={preventDefaultHandler}
-      onTouchStart={preventDefaultHandler}
-      onTouchMove={preventDefaultHandler}
-      onTouchEnd={preventDefaultHandler}
-      onTouchCancel={preventDefaultHandler}
-    >
+    <div className={`${styles.tenkeyWrapper} ${theme === "dark" ? styles.dark : ""} ${className || ""}`}>
       <div className={`${styles.keyboard} ${styles.tenkeyGrid} ${theme === "dark" ? styles.dark : ""}`}>
         {tenkeyLayout.map((column, columnIndex) => (
           <div key={columnIndex} className={styles.tenkeyColumn}>
@@ -72,7 +57,6 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
                     activeKey === (typeof key === "string" ? key : "delete") ? styles.active : ""
                   } ${isDeleteKey ? `${styles.deleteKey} ${styles.functionKey}` : ""}`}
                   onClick={() => handleKeyPress(key)}
-                  onTouchStart={(e) => handleTouchStart(e, key)}
                   disabled={disabled}
                   type="button"
                   aria-label={typeof key === "string" ? key : "削除"}
@@ -89,4 +73,3 @@ const TenkeyKeyboard: React.FC<TenkeyKeyboardProps> = ({
 }
 
 export default React.memo(TenkeyKeyboard)
-

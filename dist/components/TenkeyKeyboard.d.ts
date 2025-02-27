@@ -1,5 +1,4 @@
 import React from "react";
-import type { JSX } from "react/jsx-runtime";
 interface TenkeyKeyboardProps {
     onKeyPress: (key: string) => void;
     disabled?: boolean;

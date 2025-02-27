@@ -9,10 +9,6 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: none;
 }
 
 .container.disabled {
@@ -144,11 +140,6 @@
   background-color: #e5e5ea;
 }
 
-.topCandidate {
-  font-weight: bold;
-  background-color: #e5e5ea;
-}
-
 .keyboard {
   flex: 1;
   display: flex;
@@ -230,10 +221,6 @@
   transition: all 0.2s ease;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 0;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: none;
 }
 
 .tenkeyKey:hover {
@@ -299,10 +286,6 @@
   align-items: center;
   justify-content: center;
   padding: 0;
-  -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  user-select: none;
-  touch-action: none;
 }
 
 .confirmKey {
