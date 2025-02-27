@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useState, useCallback, useEffect, useMemo } from "react"
 import styles from "../styles/virtual-keyboard.module.css"
 import {

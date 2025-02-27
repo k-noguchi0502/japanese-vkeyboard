@@ -1462,7 +1462,7 @@ function requireReactJsxRuntime_development () {
 	}
 } (jsxRuntime));
 
-var styles = {"container":"virtual-keyboard-module_container__u6pRi","disabled":"virtual-keyboard-module_disabled__ERBdP","inputDisplay":"virtual-keyboard-module_inputDisplay__3pRwO","cursor":"virtual-keyboard-module_cursor__3HnkE","blink":"virtual-keyboard-module_blink__O6Gs6","inputArea":"virtual-keyboard-module_inputArea__IDrEv","displayArea":"virtual-keyboard-module_displayArea__JCMTs","confirmedText":"virtual-keyboard-module_confirmedText__mcJxM","inputText":"virtual-keyboard-module_inputText__rUpq9","keyboardWrapper":"virtual-keyboard-module_keyboardWrapper__oOURH","candidateArea":"virtual-keyboard-module_candidateArea__r6LdU","placeholderText":"virtual-keyboard-module_placeholderText__vTJGd","candidateList":"virtual-keyboard-module_candidateList__KMaxM","candidateItem":"virtual-keyboard-module_candidateItem__fDpKH","keyboard":"virtual-keyboard-module_keyboard__XMjxM","hirakey":"virtual-keyboard-module_hirakey__qCOZJ","column":"virtual-keyboard-module_column__k-jy6","key":"virtual-keyboard-module_key__f2tfO","tenkey":"virtual-keyboard-module_tenkey__7afVW","tenkeyGrid":"virtual-keyboard-module_tenkeyGrid__co3kM","tenkeyWrapper":"virtual-keyboard-module_tenkeyWrapper__BznWw","tenkeyColumn":"virtual-keyboard-module_tenkeyColumn__Taocb","tenkeyKey":"virtual-keyboard-module_tenkeyKey__N21Qe","deleteKey":"virtual-keyboard-module_deleteKey__zP3kH","row":"virtual-keyboard-module_row__DEywY","divkey":"virtual-keyboard-module_divkey__ekAqf","confirmKey":"virtual-keyboard-module_confirmKey__IzUns","functionKey":"virtual-keyboard-module_functionKey__msNCp","convertKey":"virtual-keyboard-module_convertKey__JBizs","input":"virtual-keyboard-module_input__s54u5","autoResizeFont":"virtual-keyboard-module_autoResizeFont__tpPAr","disabledKey":"virtual-keyboard-module_disabledKey__df6i5","dark":"virtual-keyboard-module_dark__LfdOy","diacriticsKey":"virtual-keyboard-module_diacriticsKey__klvTD","diacriticHalf":"virtual-keyboard-module_diacriticHalf__Wf-5i","disabledDiacritic":"virtual-keyboard-module_disabledDiacritic__VuKGB","smallKey":"virtual-keyboard-module_smallKey__GkCc2","active":"virtual-keyboard-module_active__wbs1J","diacriticsContainer":"virtual-keyboard-module_diacriticsContainer__dfWC-","diacriticKey":"virtual-keyboard-module_diacriticKey__YNy-6"};
+var styles = {"container":"virtual-keyboard-module_container__u6pRi","disabled":"virtual-keyboard-module_disabled__ERBdP","inputDisplay":"virtual-keyboard-module_inputDisplay__3pRwO","cursor":"virtual-keyboard-module_cursor__3HnkE","blink":"virtual-keyboard-module_blink__O6Gs6","inputArea":"virtual-keyboard-module_inputArea__IDrEv","displayArea":"virtual-keyboard-module_displayArea__JCMTs","confirmedText":"virtual-keyboard-module_confirmedText__mcJxM","inputText":"virtual-keyboard-module_inputText__rUpq9","keyboardWrapper":"virtual-keyboard-module_keyboardWrapper__oOURH","candidateArea":"virtual-keyboard-module_candidateArea__r6LdU","placeholderText":"virtual-keyboard-module_placeholderText__vTJGd","candidateList":"virtual-keyboard-module_candidateList__KMaxM","candidateItem":"virtual-keyboard-module_candidateItem__fDpKH","keyboard":"virtual-keyboard-module_keyboard__XMjxM","hirakey":"virtual-keyboard-module_hirakey__qCOZJ","column":"virtual-keyboard-module_column__k-jy6","key":"virtual-keyboard-module_key__f2tfO","tenkey":"virtual-keyboard-module_tenkey__7afVW","tenkeyGrid":"virtual-keyboard-module_tenkeyGrid__co3kM","tenkeyWrapper":"virtual-keyboard-module_tenkeyWrapper__BznWw","tenkeyColumn":"virtual-keyboard-module_tenkeyColumn__Taocb","tenkeyKey":"virtual-keyboard-module_tenkeyKey__N21Qe","deleteKey":"virtual-keyboard-module_deleteKey__zP3kH","row":"virtual-keyboard-module_row__DEywY","divkey":"virtual-keyboard-module_divkey__ekAqf","confirmKey":"virtual-keyboard-module_confirmKey__IzUns","functionKey":"virtual-keyboard-module_functionKey__msNCp","convertKey":"virtual-keyboard-module_convertKey__JBizs","input":"virtual-keyboard-module_input__s54u5","autoResizeFont":"virtual-keyboard-module_autoResizeFont__tpPAr","disabledKey":"virtual-keyboard-module_disabledKey__df6i5","dark":"virtual-keyboard-module_dark__LfdOy","diacriticsKey":"virtual-keyboard-module_diacriticsKey__klvTD","diacriticHalf":"virtual-keyboard-module_diacriticHalf__Wf-5i","disabledDiacritic":"virtual-keyboard-module_disabledDiacritic__VuKGB","smallKey":"virtual-keyboard-module_smallKey__GkCc2","active":"virtual-keyboard-module_active__wbs1J","diacriticsContainer":"virtual-keyboard-module_diacriticsContainer__dfWC-","diacriticKey":"virtual-keyboard-module_diacriticKey__YNy-6","lightInputText":"virtual-keyboard-module_lightInputText__mf7p1","darkInputText":"virtual-keyboard-module_darkInputText__HcNWx"};
 
 var dakutenMap = {
     う: "ゔ",
@@ -53326,6 +53326,23 @@ var generateCombinedCandidates = function (data) {
     }
     return combinedCandidates;
 };
+var combineCharacters = function (text) {
+    return text.split("").reduce(function (acc, char, index, array) {
+        if (index > 0) {
+            var prevChar = acc.slice(-1);
+            if (char === "゛" && prevChar in dakutenMap) {
+                return acc.slice(0, -1) + dakutenMap[prevChar];
+            }
+            else if (char === "゜" && prevChar in handakutenMap) {
+                return acc.slice(0, -1) + handakutenMap[prevChar];
+            }
+            else if (char === "小" && prevChar in komojiMap) {
+                return acc.slice(0, -1) + komojiMap[prevChar];
+            }
+        }
+        return acc + char;
+    }, "");
+};
 
 /**
  * useKeyboardNavigation: キーボードナビゲーションを管理するカスタムフック
@@ -53397,6 +53414,52 @@ var useDiacriticState = function (inputText) {
         canApplyKomoji: canApplyKomoji,
         updateDiacriticState: updateDiacriticState,
     };
+};
+
+var DraggableScroll = function (_a) {
+    var className = _a.className, children = _a.children;
+    var scrollRef = React.useRef(null);
+    var isDown = React.useRef(false);
+    var startX = React.useRef(0);
+    var scrollLeft = React.useRef(0);
+    React.useEffect(function () {
+        var slider = scrollRef.current;
+        if (!slider)
+            return;
+        var onMouseDown = function (e) {
+            isDown.current = true;
+            slider.classList.add("active");
+            startX.current = e.pageX - slider.offsetLeft;
+            scrollLeft.current = slider.scrollLeft;
+        };
+        var onMouseLeave = function () {
+            isDown.current = false;
+            slider.classList.remove("active");
+        };
+        var onMouseUp = function () {
+            isDown.current = false;
+            slider.classList.remove("active");
+        };
+        var onMouseMove = function (e) {
+            if (!isDown.current)
+                return;
+            e.preventDefault();
+            var x = e.pageX - slider.offsetLeft;
+            var walk = (x - startX.current) * 2;
+            slider.scrollLeft = scrollLeft.current - walk;
+        };
+        slider.addEventListener("mousedown", onMouseDown);
+        slider.addEventListener("mouseleave", onMouseLeave);
+        slider.addEventListener("mouseup", onMouseUp);
+        slider.addEventListener("mousemove", onMouseMove);
+        return function () {
+            slider.removeEventListener("mousedown", onMouseDown);
+            slider.removeEventListener("mouseleave", onMouseLeave);
+            slider.removeEventListener("mouseup", onMouseUp);
+            slider.removeEventListener("mousemove", onMouseMove);
+        };
+    }, []);
+    return (jsxRuntime.exports.jsx("div", __assign({ ref: scrollRef, className: className }, { children: children })));
 };
 
 var HiraganaKeyboard = function (_a) {
@@ -53552,7 +53615,7 @@ var HiraganaKeyboard = function (_a) {
         focusedKey,
         handleKeyDown,
     ]);
-    return (jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsxs("div", __assign({ className: "".concat(styles.inputArea, " ").concat(theme === "dark" ? styles.dark : "") }, { children: [jsxRuntime.exports.jsx("div", __assign({ className: styles.displayArea }, { children: jsxRuntime.exports.jsx("div", __assign({ className: styles.inputText, "aria-live": "polite" }, { children: combineCharacters(inputText) })) })), enableConversion && (jsxRuntime.exports.jsx("div", __assign({ className: "".concat(styles.candidateArea, " ").concat(enableConversion ? styles.enabled : styles.disabled), role: "listbox", "aria-label": "\u5909\u63DB\u5019\u88DC" }, { children: showCandidates && candidates.length > 0 ? (jsxRuntime.exports.jsx("div", __assign({ className: styles.candidateList }, { children: candidates.map(function (candidate, index) { return (jsxRuntime.exports.jsx("button", __assign({ className: styles.candidateItem, onClick: function () { return handleCandidateSelect(candidate); }, disabled: disabled, role: "option" }, { children: candidate }), index)); }) }))) : (jsxRuntime.exports.jsx("div", __assign({ className: styles.placeholderText }, { children: "\u5909\u63DB\u5019\u88DC\u304C\u3053\u3053\u306B\u8868\u793A\u3055\u308C\u307E\u3059" }))) })))] })), keyboardContent] }));
+    return (jsxRuntime.exports.jsxs(jsxRuntime.exports.Fragment, { children: [jsxRuntime.exports.jsxs("div", __assign({ className: "".concat(styles.inputArea, " ").concat(theme === "dark" ? styles.dark : "") }, { children: [jsxRuntime.exports.jsx("div", __assign({ className: styles.displayArea }, { children: jsxRuntime.exports.jsx("div", __assign({ className: styles.inputText, "aria-live": "polite" }, { children: combineCharacters(inputText) })) })), enableConversion && (jsxRuntime.exports.jsx(DraggableScroll, __assign({ className: "".concat(styles.candidateArea, " ").concat(enableConversion ? styles.enabled : styles.disabled) }, { children: showCandidates && candidates.length > 0 ? (jsxRuntime.exports.jsx("div", __assign({ className: styles.candidateList, role: "listbox", "aria-label": "\u5909\u63DB\u5019\u88DC" }, { children: candidates.map(function (candidate, index) { return (jsxRuntime.exports.jsx("button", __assign({ className: styles.candidateItem, onClick: function () { return handleCandidateSelect(candidate); }, disabled: disabled, role: "option" }, { children: candidate }), index)); }) }))) : (jsxRuntime.exports.jsx("div", __assign({ className: styles.placeholderText }, { children: "\u5909\u63DB\u5019\u88DC\u304C\u3053\u3053\u306B\u8868\u793A\u3055\u308C\u307E\u3059" }))) })))] })), keyboardContent] }));
 };
 var HiraganaKeyboard$1 = React__default["default"].memo(HiraganaKeyboard);
 
@@ -53652,7 +53715,8 @@ var useKeyboardLogic = function (value, onChange, keyboardType, kanaMode, maxLen
             switch (key) {
                 case "delete":
                     if (inputText.length > 0) {
-                        newInputText = inputText.slice(0, -1);
+                        var combinedText = combineCharacters(inputText);
+                        newInputText = combinedText.slice(0, -1);
                     }
                     else if (value.length > 0) {
                         newValue = value.slice(0, -1);
@@ -53676,7 +53740,13 @@ var useKeyboardLogic = function (value, onChange, keyboardType, kanaMode, maxLen
         }
         else {
             if (key === "delete") {
-                newValue = value.slice(0, -1);
+                if (inputText.length > 0) {
+                    var combinedText = combineCharacters(inputText);
+                    newInputText = combinedText.slice(0, -1);
+                }
+                else {
+                    newValue = value.slice(0, -1);
+                }
             }
             else if (key !== "確定") {
                 newValue += key;
@@ -53754,12 +53824,12 @@ var VKeyboard = function (_a) {
     var _j = useKeyboardState(autoFocus, disabled, onFocus, onBlur, onKeyDown), kanaMode = _j.kanaMode, setKanaMode = _j.setKanaMode, alphabetCase = _j.alphabetCase, setAlphabetCase = _j.setAlphabetCase, handleFocus = _j.handleFocus, handleBlur = _j.handleBlur, internalHandleKeyDown = _j.handleKeyDown;
     var _k = useKeyboardLogic(value, onChange, keyboardType, kanaMode, maxLength, disabled), inputText = _k.inputText, setInputText = _k.setInputText, handleKeyPress = _k.handleKeyPress, handleCandidateSelect = _k.handleCandidateSelect, candidates = _k.candidates;
     // キーのレンダリング
-    var renderKey = function (key) {
+    var renderKey = React.useCallback(function (key) {
         if (key === "delete") {
             return jsxRuntime.exports.jsx(DeleteIcon, {});
         }
         return jsxRuntime.exports.jsx(jsxRuntime.exports.Fragment, { children: key });
-    };
+    }, []);
     // キーボードのプロパティ
     var keyboardProps = React.useMemo(function () { return ({
         inputText: inputText,
@@ -53786,7 +53856,6 @@ var VKeyboard = function (_a) {
         value,
         handleCandidateSelect,
         disabled,
-        renderKey,
         theme,
         inputMode,
         kanaMode,
@@ -53795,7 +53864,9 @@ var VKeyboard = function (_a) {
         setAlphabetCase,
         placeholder,
         candidates,
+        renderKey,
     ]);
+    candidates.length > 0;
     return (jsxRuntime.exports.jsx("div", __assign({ className: "".concat(styles.container, " ").concat(className, " ").concat(disabled ? styles.disabled : "", " ").concat(theme === "dark" ? styles.dark : ""), tabIndex: disabled ? -1 : 0, onFocus: handleFocus, onBlur: handleBlur, onKeyDown: internalHandleKeyDown, role: "application", "aria-label": "\u4EEE\u60F3\u30AD\u30FC\u30DC\u30FC\u30C9" }, { children: jsxRuntime.exports.jsx("div", __assign({ className: styles.keyboardWrapper }, { children: keyboardType === "hirakey" ? (jsxRuntime.exports.jsx(HiraganaKeyboard$1, __assign({}, keyboardProps))) : (jsxRuntime.exports.jsx(TenkeyKeyboard$1, { onKeyPress: handleKeyPress, disabled: disabled, renderKey: renderKey, theme: theme, inputMode: inputMode, placeholder: placeholder, candidates: candidates })) })) })));
 };
 var VirtualKeyboard = React__default["default"].memo(VKeyboard);

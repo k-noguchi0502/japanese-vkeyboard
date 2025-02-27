@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from "react"
 import type { KeyboardType, KanaMode } from "../utils/types"
-import { fetchCandidates } from "../utils/utils"
+import { fetchCandidates, combineCharacters } from "../utils/utils"
 
 const DEBOUNCE_DELAY = 150 // ミリ秒に短縮
 
@@ -82,7 +82,8 @@ export const useKeyboardLogic = (
         switch (key) {
           case "delete":
             if (inputText.length > 0) {
-              newInputText = inputText.slice(0, -1)
+              const combinedText = combineCharacters(inputText)
+              newInputText = combinedText.slice(0, -1)
             } else if (value.length > 0) {
               newValue = value.slice(0, -1)
             }
@@ -103,7 +104,12 @@ export const useKeyboardLogic = (
         }
       } else {
         if (key === "delete") {
-          newValue = value.slice(0, -1)
+          if (inputText.length > 0) {
+            const combinedText = combineCharacters(inputText)
+            newInputText = combinedText.slice(0, -1)
+          } else {
+            newValue = value.slice(0, -1)
+          }
         } else if (key !== "確定") {
           newValue += key
         }

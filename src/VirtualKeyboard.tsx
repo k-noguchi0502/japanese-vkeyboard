@@ -1,5 +1,3 @@
-"use client"
-
 import React, { useMemo, useCallback } from "react"
 import { useTheme } from "next-themes"
 import HiraganaKeyboard from "./components/HiraganaKeyboard"

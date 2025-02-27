@@ -1,4 +1,5 @@
 import customConversionList from "./Conversions.json"
+import { dakutenMap, handakutenMap, komojiMap } from "./constants"
 
 interface ConversionResult {
   original: string
@@ -112,6 +113,22 @@ const generateCombinedCandidates = (data: [string, string[]][]): string[] => {
   }
 
   return combinedCandidates
+}
+
+export const combineCharacters = (text: string): string => {
+  return text.split("").reduce((acc, char, index, array) => {
+    if (index > 0) {
+      const prevChar = acc.slice(-1)
+      if (char === "゛" && prevChar in dakutenMap) {
+        return acc.slice(0, -1) + dakutenMap[prevChar as keyof typeof dakutenMap]
+      } else if (char === "゜" && prevChar in handakutenMap) {
+        return acc.slice(0, -1) + handakutenMap[prevChar as keyof typeof handakutenMap]
+      } else if (char === "小" && prevChar in komojiMap) {
+        return acc.slice(0, -1) + komojiMap[prevChar as keyof typeof komojiMap]
+      }
+    }
+    return acc + char
+  }, "")
 }
 
 export const processConversionResults = (
