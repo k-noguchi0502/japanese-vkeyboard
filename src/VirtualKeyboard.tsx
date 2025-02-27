@@ -1,4 +1,6 @@
-import React, { useMemo } from "react"
+"use client"
+
+import React, { useMemo, useCallback } from "react"
 import { useTheme } from "next-themes"
 import HiraganaKeyboard from "./components/HiraganaKeyboard"
 import TenkeyKeyboard from "./components/TenkeyKeyboard"
@@ -9,6 +11,7 @@ import { fetchCandidates } from "./utils/utils"
 import { useKeyboardLogic } from "./hooks/useKeyboardLogic"
 import { useKeyboardState } from "./hooks/useKeyboardState"
 import styles from "./styles/virtual-keyboard.module.css"
+import DraggableScroll from "./components/DraggableScroll"
 
 export { dakutenMap, handakutenMap, hiraganaLayout, katakanaLayout, tenkeyLayout, fetchCandidates }
 
@@ -75,12 +78,12 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
   )
 
   // キーのレンダリング
-  const renderKey = (key: string | JSX.Element | null): JSX.Element => {
+  const renderKey = useCallback((key: string | JSX.Element | null): JSX.Element => {
     if (key === "delete") {
       return <DeleteIcon />
     }
     return <>{key}</>
-  }
+  }, [])
 
   // キーボードのプロパティ
   const keyboardProps = useMemo(
@@ -110,7 +113,6 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       value,
       handleCandidateSelect,
       disabled,
-      renderKey,
       theme,
       inputMode,
       kanaMode,
@@ -119,8 +121,11 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
       setAlphabetCase,
       placeholder,
       candidates,
+      renderKey,
     ],
   )
+
+  const showCandidates = candidates.length > 0
 
   return (
     <div
@@ -154,3 +159,4 @@ const VKeyboard: React.FC<VKeyboardProps> = ({
 }
 
 export default React.memo(VKeyboard)
+

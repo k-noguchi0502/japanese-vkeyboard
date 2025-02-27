@@ -1,3 +1,5 @@
+"use client"
+
 import React, { useState, useCallback, useEffect, useMemo } from "react"
 import styles from "../styles/virtual-keyboard.module.css"
 import {
@@ -13,6 +15,7 @@ import { fetchCandidates } from "../utils/utils"
 import type { KanaMode, AlphabetCase } from "../utils/types"
 import { useKeyboardNavigation } from "../hooks/useKeyboardNavigation"
 import { useDiacriticState } from "../hooks/useDiacriticState"
+import DraggableScroll from "./DraggableScroll"
 
 interface HiraganaKeyboardProps {
   inputText: string
@@ -277,13 +280,9 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
           </div>
         </div>
         {enableConversion && (
-          <div
-            className={`${styles.candidateArea} ${enableConversion ? styles.enabled : styles.disabled}`}
-            role="listbox"
-            aria-label="変換候補"
-          >
+          <DraggableScroll className={`${styles.candidateArea} ${enableConversion ? styles.enabled : styles.disabled}`}>
             {showCandidates && candidates.length > 0 ? (
-              <div className={styles.candidateList}>
+              <div className={styles.candidateList} role="listbox" aria-label="変換候補">
                 {candidates.map((candidate, index) => (
                   <button
                     key={index}
@@ -299,7 +298,7 @@ const HiraganaKeyboard: React.FC<HiraganaKeyboardProps> = ({
             ) : (
               <div className={styles.placeholderText}>変換候補がここに表示されます</div>
             )}
-          </div>
+          </DraggableScroll>
         )}
       </div>
       {keyboardContent}
